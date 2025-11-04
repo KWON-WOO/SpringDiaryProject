@@ -130,6 +130,7 @@ Spring Boot 기반의 다이어리 프로젝트 API 명세서입니다. 일정 �
 }
 ```
 ## 🗑️ 일정 삭제
+
 - **url**:`DELETE /schedules/{id}`
 - 설명: 특정 일정을 삭제합니다.
 - **Request Body**:
