@@ -49,8 +49,8 @@ Spring Boot 기반의 다이어리 프로젝트 API 명세서입니다. 일정 �
 ```
 
 - **Status Code**:
-- `201 Created`: 등록 성공
-- `400 Bad Request`: 필수값 누락
+- `2**`: 등록 성공
+- `5**`: 잘못된 파라미터
 
 ## 🔍 일정 조회
 
@@ -73,9 +73,9 @@ Spring Boot 기반의 다이어리 프로젝트 API 명세서입니다. 일정 �
             }
         }
         ```
-- Status Code:
-- 200 OK
-- Null
+- **Status Code**:
+- `2**`: 조회완료
+- `Null`: 조회 가능한 일정이 없음
 
 - ### 특정일정
   - **URL**: `GET /schedules/{name}`
@@ -99,9 +99,10 @@ Spring Boot 기반의 다이어리 프로젝트 API 명세서입니다. 일정 �
         "updateDate": "2025-11-04T15:12:00"
         }
     }
-- Status Code:
-- 200 OK
-- 404 Not Found: 해당 일정 없음
+    ```
+- **Status Code**:
+- `2**`: 조회 완료.
+- `5**`: 해당 인물이 작성한 일정이 없음
 
 ## ✏️ 일정 수정
 
@@ -128,7 +129,9 @@ Spring Boot 기반의 다이어리 프로젝트 API 명세서입니다. 일정 �
   "updateDate": "2025-11-04T17:00:00"
 }
 ```
-
+- **State Code**:
+- `2**`: 수정완료
+- `5**`: 잘못된 입력값.
 
 ## 🗑️ 일정 삭제
 
@@ -150,6 +153,9 @@ Spring Boot 기반의 다이어리 프로젝트 API 명세서입니다. 일정 �
 "createDate": "2025-11-04 4:40:00"
 }
 ```
+- **State Code**:
+- `2**`: 삭제 완료
+- `5**`: 잘못된 입력값
 ## 💬 댓글 등록
 
 - **URL**: `POST /schedules/{scheduleId}/comments`
@@ -173,6 +179,6 @@ Spring Boot 기반의 다이어리 프로젝트 API 명세서입니다. 일정 �
 }
 ```
 
-- Status Code:
-- 201 Created
-- 404 Not Found: 일정 없음
+- **Status Code**:
+- `2**`:등록 완료.
+- `5**`: 작성 실패. 잘못된 입력값.
