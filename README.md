@@ -1,6 +1,6 @@
 # ERD
 
-<img width="968" height="199" alt="Image" src="https://github.com/user-attachments/assets/3ea5b7ff-854f-48f1-901c-618cee5f2abb" />
+<img width="936" height="180" alt="Image" src="https://github.com/user-attachments/assets/e65faa66-16c6-4ad4-a177-eae81bd350c0" />
 
 # 📘 Diary API Documentation
 
