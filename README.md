@@ -129,6 +129,8 @@ Spring Boot 기반의 다이어리 프로젝트 API 명세서입니다. 일정 �
   "updateDate": "2025-11-04T17:00:00"
 }
 ```
+
+
 ## 🗑️ 일정 삭제
 
 - **url**:`DELETE /schedules/{id}`
