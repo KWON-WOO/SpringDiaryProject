@@ -2,7 +2,7 @@ package springdiaryproject.service;
 
 import springdiaryproject.dto.CreateScheduleRequest;
 import springdiaryproject.dto.CreateScheduleResponse;
-import springdiaryproject.dto.GetUserScheduleResponse;
+import springdiaryproject.dto.GetScheduleResponse;
 import springdiaryproject.entity.Schedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,12 +40,14 @@ public class DiaryService {
     }
 
     @Transactional
-    public List<GetUserScheduleResponse> getUserSchedules(String userName){
-        List<Schedule> schedules = scheduleRepository.findByName(userName);
-        List<GetUserScheduleResponse> dtos = new ArrayList<>();
+    public List<GetScheduleResponse> getUserSchedules(String userName){
+        List<Schedule> schedules = userName == null?
+                        scheduleRepository.findAllByOrderByModifiedAtDesc():scheduleRepository.findByName(userName);
+
+        List<GetScheduleResponse> dtos = new ArrayList<>();
 
         for (Schedule schedule: schedules) {
-            dtos.add(new GetUserScheduleResponse(
+            dtos.add(new GetScheduleResponse(
                schedule.getId(),
                     schedule.getTitle(),
                     schedule.getContent(),
@@ -55,5 +57,20 @@ public class DiaryService {
             ));
         }
         return dtos;
+    }
+
+    @Transactional
+    public GetScheduleResponse getScheduleById(Long id) {
+        Schedule schedule = scheduleRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("User not found with id :" + id)
+        );
+        return new GetScheduleResponse(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getName(),
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
     }
 }

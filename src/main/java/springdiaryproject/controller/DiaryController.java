@@ -6,7 +6,7 @@ import springdiaryproject.dto.CreateScheduleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import springdiaryproject.dto.GetUserScheduleResponse;
+import springdiaryproject.dto.GetScheduleResponse;
 import springdiaryproject.service.DiaryService;
 
 import java.util.List;
@@ -24,8 +24,13 @@ public class DiaryController {
     }
 
     @GetMapping("/schedules")
-    public ResponseEntity<List<GetUserScheduleResponse>> printUserSchedule(@RequestParam String name){
-        List<GetUserScheduleResponse> result = diaryService.getUserSchedules(name);
+    public ResponseEntity<List<GetScheduleResponse>> printUserSchedule(@RequestParam(required=false) String name){
+        List<GetScheduleResponse> result = diaryService.getUserSchedules(name);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+    @GetMapping("/schedules/{id}")
+    public ResponseEntity<GetScheduleResponse> printScheduleById(@PathVariable Long id) {
+        GetScheduleResponse result = diaryService.getScheduleById(id);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
