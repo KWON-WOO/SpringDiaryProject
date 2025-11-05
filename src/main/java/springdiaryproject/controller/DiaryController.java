@@ -1,12 +1,10 @@
 package springdiaryproject.controller;
 
 import org.springframework.web.bind.annotation.*;
-import springdiaryproject.dto.CreateScheduleRequest;
-import springdiaryproject.dto.CreateScheduleResponse;
+import springdiaryproject.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import springdiaryproject.dto.GetScheduleResponse;
 import springdiaryproject.service.DiaryService;
 
 import java.util.List;
@@ -32,5 +30,15 @@ public class DiaryController {
     public ResponseEntity<GetScheduleResponse> printScheduleById(@PathVariable Long id) {
         GetScheduleResponse result = diaryService.getScheduleById(id);
         return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+    @PatchMapping("/schedules/{id}")
+    public ResponseEntity<UpdateScheduleResponse> updateSchedule(@PathVariable Long id, @RequestBody UpdateScheduleRequest request) {
+        UpdateScheduleResponse result = diaryService.updateSchedule(id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+    @DeleteMapping("/schedules/{id}")
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestBody DeleteScheduleRequest password) {
+        diaryService.deleteSchedule(id, password);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
