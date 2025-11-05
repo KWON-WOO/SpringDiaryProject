@@ -17,7 +17,7 @@ public class DiaryController {
     /** ResponseEntity.status(HttpStatus.CRUD).body(response)*/
     @PostMapping("/schedules")
     public ResponseEntity<CreateScheduleResponse> createSchedule(@RequestBody CreateScheduleRequest request) {
-        CreateScheduleResponse savedSchedule = diaryService.save(request);
+        CreateScheduleResponse savedSchedule = diaryService.saveSchedule(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedSchedule);
     }
 
@@ -40,5 +40,11 @@ public class DiaryController {
     public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestBody DeleteScheduleRequest password) {
         diaryService.deleteSchedule(id, password);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping("/schedules/{id}/comments")
+    public ResponseEntity<CreateCommentResponse> createComment(@PathVariable Long id, @RequestBody CreateCommentRequest request) {
+        CreateCommentResponse savedComment = diaryService.saveComment(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
     }
 }

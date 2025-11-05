@@ -4,37 +4,31 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.List;
 
 @Getter
-@Setter
 @Entity
-@Table(name="schedules")
+@Table(name="comments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Schedule extends BaseEntity{
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Setter
-    @Column(nullable = false)
-    private String title;
-    @Column(nullable = false)
+    @Column(nullable=false)
     private String content;
-    @Setter
-    @Column(nullable = false)
+    @Column(nullable=false)
     private String name;
-    @Column(nullable = false)
+    @Column(nullable=false)
     private String password;
+    @ManyToOne
+    @JoinColumn(name="schedule_id")
+    private Schedule schedule;
 
-    public Schedule(String title,
-                    String content,
-                    String name,
-                    String password) {
-        this.title = title;
+    public Comment(String content, String name, String password){
         this.content = content;
         this.name = name;
         this.password = password;
+    }
+    public void setSchedule(Schedule schedule){
+        this.schedule = schedule;
     }
 }

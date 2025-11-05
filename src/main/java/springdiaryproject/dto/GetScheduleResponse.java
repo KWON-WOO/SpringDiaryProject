@@ -3,6 +3,8 @@ package springdiaryproject.dto;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Getter
 public class GetScheduleResponse {
     private final Long id;
@@ -11,7 +13,17 @@ public class GetScheduleResponse {
     private final String name;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
+    private final List<GetCommentResponse> comments;
 
+    public GetScheduleResponse(Long id, String title, String content, String name, LocalDateTime createdAt, LocalDateTime modifiedAt, List<GetCommentResponse> comments) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+        this.comments = comments;
+    }
     public GetScheduleResponse(Long id, String title, String content, String name, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
         this.title = title;
@@ -19,5 +31,6 @@ public class GetScheduleResponse {
         this.name = name;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
+        this.comments = null;
     }
 }

@@ -3,11 +3,12 @@ package springdiaryproject.service;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import springdiaryproject.dto.*;
+import springdiaryproject.entity.Comment;
 import springdiaryproject.entity.Schedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springdiaryproject.repository.ReplyRepository;
+import springdiaryproject.repository.CommentRepository;
 import springdiaryproject.repository.ScheduleRepository;
 
 import java.util.ArrayList;
@@ -17,10 +18,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DiaryService {
     private final ScheduleRepository scheduleRepository;
-    private final ReplyRepository replyRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
-    public CreateScheduleResponse save(CreateScheduleRequest request) {
+    public CreateScheduleResponse saveSchedule(CreateScheduleRequest request) {
         Schedule schedule = new Schedule(
                 request.getTitle(),
                 request.getContent(),
@@ -36,13 +37,12 @@ public class DiaryService {
                 savedSchedule.getCreatedAt(),
                 savedSchedule.getModifiedAt()
         );
-
     }
 
     @Transactional
     public List<GetScheduleResponse> getUserSchedules(String userName){
-        List<Schedule> schedules = userName == null?
-                        scheduleRepository.findAllByOrderByModifiedAtDesc():scheduleRepository.findByName(userName);
+        List<Schedule> schedules = (userName == null)?
+                        scheduleRepository.findAllByOrderByModifiedAtDesc(): scheduleRepository.findByNameOrderByModifiedAtDesc(userName);
 
         List<GetScheduleResponse> dtos = new ArrayList<>();
 
@@ -62,14 +62,25 @@ public class DiaryService {
     @Transactional
     public GetScheduleResponse getScheduleById(Long id) {
         Schedule schedule = getSchedule(id);
-
+        List<Comment> comments = commentRepository.findByScheduleOrderByModifiedAtDesc(getSchedule(id));
+        List<GetCommentResponse> dtos = new ArrayList<>();
+        for (Comment comment: comments) {
+            dtos.add(new GetCommentResponse(
+                    comment.getId(),
+                    comment.getContent(),
+                    comment.getName(),
+                    comment.getCreatedAt(),
+                    comment.getModifiedAt()
+            ));
+        }
         return new GetScheduleResponse(
                 schedule.getId(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getName(),
                 schedule.getCreatedAt(),
-                schedule.getModifiedAt()
+                schedule.getModifiedAt(),
+                dtos
         );
     }
 
@@ -99,9 +110,29 @@ public class DiaryService {
 
         if (passwordTask(password.getPassword(), schedule.getPassword()))
             scheduleRepository.deleteById(id);
-        else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "패스워드가 일치하지 않음");
     }
 
+    @Transactional
+    public CreateCommentResponse saveComment(Long id, CreateCommentRequest request) {
+         if(commentRepository.countByScheduleId(id) >= 10)
+             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "패스워드가 일치하지 않음");
+
+        Comment comment = new Comment(
+                request.getContent(),
+                request.getName(),
+                request.getPassword()
+        );
+        comment.setSchedule(getSchedule(id));
+        Comment savedComment = commentRepository.save(comment);
+        return new CreateCommentResponse(
+                savedComment.getSchedule(),
+                savedComment.getId(),
+                savedComment.getContent(),
+                savedComment.getName(),
+                savedComment.getCreatedAt(),
+                savedComment.getModifiedAt()
+        );
+    }
 
     public boolean passwordTask(String str1, String str2){
         if (!str1.equals(str2)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "패스워드가 일치하지 않음");
