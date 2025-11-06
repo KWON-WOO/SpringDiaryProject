@@ -1,10 +1,13 @@
 package springdiaryproject.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-import springdiaryproject.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import springdiaryproject.dto.comment.CreateCommentRequest;
+import springdiaryproject.dto.comment.CreateCommentResponse;
+import springdiaryproject.dto.schedule.*;
 import springdiaryproject.service.DiaryService;
 
 import java.util.List;
@@ -16,7 +19,7 @@ public class DiaryController {
 
     /** ResponseEntity.status(HttpStatus.CRUD).body(response)*/
     @PostMapping("/schedules")
-    public ResponseEntity<CreateScheduleResponse> createSchedule(@RequestBody CreateScheduleRequest request) {
+    public ResponseEntity<CreateScheduleResponse> createSchedule(@RequestBody @Valid CreateScheduleRequest request) {
         CreateScheduleResponse savedSchedule = diaryService.saveSchedule(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedSchedule);
     }
@@ -32,18 +35,18 @@ public class DiaryController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
     @PatchMapping("/schedules/{id}")
-    public ResponseEntity<UpdateScheduleResponse> updateSchedule(@PathVariable Long id, @RequestBody UpdateScheduleRequest request) {
+    public ResponseEntity<UpdateScheduleResponse> updateSchedule(@PathVariable Long id, @RequestBody @Valid UpdateScheduleRequest request) {
         UpdateScheduleResponse result = diaryService.updateSchedule(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
     @DeleteMapping("/schedules/{id}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestBody DeleteScheduleRequest password) {
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestBody @Valid DeleteScheduleRequest password) {
         diaryService.deleteSchedule(id, password);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping("/schedules/{id}/comments")
-    public ResponseEntity<CreateCommentResponse> createComment(@PathVariable Long id, @RequestBody CreateCommentRequest request) {
+    public ResponseEntity<CreateCommentResponse> createComment(@PathVariable Long id, @RequestBody @Valid CreateCommentRequest request) {
         CreateCommentResponse savedComment = diaryService.saveComment(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
     }

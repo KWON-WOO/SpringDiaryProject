@@ -1,4 +1,4 @@
-package springdiaryproject.dto;
+package springdiaryproject.dto.comment;
 
 import lombok.Getter;
 import springdiaryproject.entity.Schedule;
@@ -21,5 +21,13 @@ public class CreateCommentResponse {
         this.name = name;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
+    }
+    public CreateCommentResponse(CommentDto dto) {
+        this.schedule = dto.getSchedule();
+        this.id = dto.getId();
+        this.content = dto.getContent();
+        this.name = dto.getName();
+        this.createdAt = dto.getCreatedAt();
+        this.modifiedAt = dto.getModifiedAt();
     }
 }

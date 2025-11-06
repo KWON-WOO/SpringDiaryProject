@@ -2,7 +2,15 @@ package springdiaryproject.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import springdiaryproject.dto.*;
+import springdiaryproject.dto.comment.CommentDto;
+import springdiaryproject.dto.comment.CreateCommentRequest;
+import springdiaryproject.dto.comment.CreateCommentResponse;
+import springdiaryproject.dto.comment.GetCommentResponse;
+import springdiaryproject.dto.schedule.*;
+import springdiaryproject.exception.CommentOverflowException;
+import springdiaryproject.exception.NotFoundScheduleException;
+import springdiaryproject.exception.PasswordMisMatchException;
+import springdiaryproject.exception.ServiceExceptionHandler;
 import springdiaryproject.entity.Comment;
 import springdiaryproject.entity.Schedule;
 import lombok.RequiredArgsConstructor;
@@ -19,23 +27,18 @@ import java.util.List;
 public class DiaryService {
     private final ScheduleRepository scheduleRepository;
     private final CommentRepository commentRepository;
+    private ServiceExceptionHandler exception = new ServiceExceptionHandler();
 
     @Transactional
     public CreateScheduleResponse saveSchedule(CreateScheduleRequest request) {
-        Schedule schedule = new Schedule(
-                request.getTitle(),
-                request.getContent(),
-                request.getName(),
-                request.getPassword()
-        );
+        Schedule schedule = new Schedule(request.getTitle(), request.getContent(),
+                request.getName(), request.getPassword());
+
         Schedule savedSchedule = scheduleRepository.save(schedule);
-        return new CreateScheduleResponse(
-                savedSchedule.getId(),
-                savedSchedule.getTitle(),
-                savedSchedule.getContent(),
-                savedSchedule.getName(),
-                savedSchedule.getCreatedAt(),
-                savedSchedule.getModifiedAt()
+
+        return new CreateScheduleResponse(savedSchedule.getId(), savedSchedule.getTitle(),
+                savedSchedule.getContent(), savedSchedule.getName(),
+                savedSchedule.getCreatedAt(), savedSchedule.getModifiedAt()
         );
     }
 
@@ -48,12 +51,8 @@ public class DiaryService {
 
         for (Schedule schedule: schedules) {
             dtos.add(new GetScheduleResponse(
-               schedule.getId(),
-                    schedule.getTitle(),
-                    schedule.getContent(),
-                    schedule.getName(),
-                    schedule.getCreatedAt(),
-                    schedule.getModifiedAt()
+               schedule.getId(), schedule.getTitle(), schedule.getContent(),
+                    schedule.getName(), schedule.getCreatedAt(), schedule.getModifiedAt()
             ));
         }
         return dtos;
@@ -64,23 +63,17 @@ public class DiaryService {
         Schedule schedule = getSchedule(id);
         List<Comment> comments = commentRepository.findByScheduleOrderByModifiedAtDesc(getSchedule(id));
         List<GetCommentResponse> dtos = new ArrayList<>();
+
         for (Comment comment: comments) {
             dtos.add(new GetCommentResponse(
-                    comment.getId(),
-                    comment.getContent(),
-                    comment.getName(),
-                    comment.getCreatedAt(),
-                    comment.getModifiedAt()
+                    comment.getId(), comment.getContent(), comment.getName(),
+                    comment.getCreatedAt(), comment.getModifiedAt()
             ));
         }
+
         return new GetScheduleResponse(
-                schedule.getId(),
-                schedule.getTitle(),
-                schedule.getContent(),
-                schedule.getName(),
-                schedule.getCreatedAt(),
-                schedule.getModifiedAt(),
-                dtos
+                schedule.getId(), schedule.getTitle(), schedule.getContent(),
+                schedule.getName(), schedule.getCreatedAt(), schedule.getModifiedAt(), dtos
         );
     }
 
@@ -97,51 +90,40 @@ public class DiaryService {
         } else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "패스워드가 일치하지 않음");
 
         return new UpdateScheduleResponse(
-                schedule.getId(),
-                schedule.getTitle(),
-                schedule.getName(),
-                schedule.getModifiedAt()
+                schedule.getId(), schedule.getTitle(),
+                schedule.getName(), schedule.getModifiedAt()
         );
     }
 
     @Transactional
-    public void deleteSchedule(Long id, DeleteScheduleRequest password){
+    public void deleteSchedule(Long id, DeleteScheduleRequest pwd){
         Schedule schedule = getSchedule(id);
 
-        if (passwordTask(password.getPassword(), schedule.getPassword()))
+        if (passwordTask(pwd.getPassword(), schedule.getPassword()))
             scheduleRepository.deleteById(id);
     }
 
     @Transactional
     public CreateCommentResponse saveComment(Long id, CreateCommentRequest request) {
-         if(commentRepository.countByScheduleId(id) >= 10)
-             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "패스워드가 일치하지 않음");
+         if (commentRepository.countByScheduleId(id) >= 10) throw new CommentOverflowException();
 
-        Comment comment = new Comment(
-                request.getContent(),
-                request.getName(),
-                request.getPassword()
-        );
+        Comment comment = new Comment(request.getContent(), request.getName(), request.getPassword());
+
         comment.setSchedule(getSchedule(id));
-        Comment savedComment = commentRepository.save(comment);
-        return new CreateCommentResponse(
-                savedComment.getSchedule(),
-                savedComment.getId(),
-                savedComment.getContent(),
-                savedComment.getName(),
-                savedComment.getCreatedAt(),
-                savedComment.getModifiedAt()
-        );
+
+        CommentDto dto = new CommentDto(commentRepository.save(comment));
+
+        return new CreateCommentResponse(dto);
     }
 
     public boolean passwordTask(String str1, String str2){
-        if (!str1.equals(str2)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "패스워드가 일치하지 않음");
+        if (!str1.equals(str2)) throw new PasswordMisMatchException();
         return true;
     }
 
     public Schedule getSchedule(Long id) {
         return scheduleRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 ID")
+                () -> new NotFoundScheduleException()
         );
     }
 }

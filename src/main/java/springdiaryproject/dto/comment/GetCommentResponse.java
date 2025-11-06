@@ -1,7 +1,6 @@
-package springdiaryproject.dto;
+package springdiaryproject.dto.comment;
 
 import lombok.Getter;
-import springdiaryproject.entity.Schedule;
 
 import java.time.LocalDateTime;
 
