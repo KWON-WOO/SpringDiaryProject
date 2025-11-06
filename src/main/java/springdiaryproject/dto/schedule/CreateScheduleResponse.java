@@ -1,6 +1,7 @@
 package springdiaryproject.dto.schedule;
 
 import lombok.Getter;
+import springdiaryproject.entity.Schedule;
 
 import java.time.LocalDateTime;
 
@@ -25,5 +26,13 @@ public class CreateScheduleResponse {
         this.name = name;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
+    }
+    public CreateScheduleResponse(ScheduleDto dto) {
+        this.id = dto.getId();
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.name = dto.getName();
+        this.createdAt = dto.getCreatedAt();
+        this.modifiedAt = dto.getModifiedAt();
     }
 }

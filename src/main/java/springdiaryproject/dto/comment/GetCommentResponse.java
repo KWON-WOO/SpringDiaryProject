@@ -19,4 +19,11 @@ public class GetCommentResponse {
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
+    public GetCommentResponse(CommentDto dto) {
+        this.id = dto.getId();
+        this.content = dto.getContent();
+        this.name = dto.getName();
+        this.createdAt = dto.getCreatedAt();
+        this.modifiedAt = dto.getModifiedAt();
+    }
 }

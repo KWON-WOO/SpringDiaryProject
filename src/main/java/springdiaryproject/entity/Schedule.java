@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import springdiaryproject.dto.schedule.ScheduleDto;
 
 import java.util.List;
 
@@ -28,13 +29,10 @@ public class Schedule extends BaseEntity{
     @Column(nullable = false)
     private String password;
 
-    public Schedule(String title,
-                    String content,
-                    String name,
-                    String password) {
-        this.title = title;
-        this.content = content;
-        this.name = name;
-        this.password = password;
+    public Schedule(ScheduleDto dto) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.name = dto.getName();
+        this.password = dto.getPassword();
     }
 }

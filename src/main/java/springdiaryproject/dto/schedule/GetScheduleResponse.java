@@ -34,4 +34,14 @@ public class GetScheduleResponse {
         this.modifiedAt = modifiedAt;
         this.comments = null;
     }
+
+    public GetScheduleResponse(ScheduleDto dto) {
+        this.id = dto.getId();
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.name = dto.getName();
+        this.createdAt = dto.getCreatedAt();
+        this.modifiedAt = dto.getModifiedAt();
+        this.comments = dto.getComments();
+    }
 }

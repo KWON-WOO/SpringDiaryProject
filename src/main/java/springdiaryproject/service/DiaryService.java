@@ -31,15 +31,11 @@ public class DiaryService {
 
     @Transactional
     public CreateScheduleResponse saveSchedule(CreateScheduleRequest request) {
-        Schedule schedule = new Schedule(request.getTitle(), request.getContent(),
-                request.getName(), request.getPassword());
+        Schedule schedule = new Schedule(new ScheduleDto(request));
 
-        Schedule savedSchedule = scheduleRepository.save(schedule);
+        ScheduleDto dto = new ScheduleDto(scheduleRepository.save(schedule));
 
-        return new CreateScheduleResponse(savedSchedule.getId(), savedSchedule.getTitle(),
-                savedSchedule.getContent(), savedSchedule.getName(),
-                savedSchedule.getCreatedAt(), savedSchedule.getModifiedAt()
-        );
+        return new CreateScheduleResponse(dto);
     }
 
     @Transactional
@@ -49,12 +45,8 @@ public class DiaryService {
 
         List<GetScheduleResponse> dtos = new ArrayList<>();
 
-        for (Schedule schedule: schedules) {
-            dtos.add(new GetScheduleResponse(
-               schedule.getId(), schedule.getTitle(), schedule.getContent(),
-                    schedule.getName(), schedule.getCreatedAt(), schedule.getModifiedAt()
-            ));
-        }
+        schedules.stream().forEach(schedule -> dtos.add(new GetScheduleResponse(new ScheduleDto(schedule))));
+
         return dtos;
     }
 
@@ -64,17 +56,9 @@ public class DiaryService {
         List<Comment> comments = commentRepository.findByScheduleOrderByModifiedAtDesc(getSchedule(id));
         List<GetCommentResponse> dtos = new ArrayList<>();
 
-        for (Comment comment: comments) {
-            dtos.add(new GetCommentResponse(
-                    comment.getId(), comment.getContent(), comment.getName(),
-                    comment.getCreatedAt(), comment.getModifiedAt()
-            ));
-        }
+        comments.stream().forEach(comment -> dtos.add(new GetCommentResponse(new CommentDto(comment))));
 
-        return new GetScheduleResponse(
-                schedule.getId(), schedule.getTitle(), schedule.getContent(),
-                schedule.getName(), schedule.getCreatedAt(), schedule.getModifiedAt(), dtos
-        );
+        return new GetScheduleResponse(new ScheduleDto(schedule, dtos));
     }
 
     @Transactional
