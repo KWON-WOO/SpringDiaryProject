@@ -1,4 +1,4 @@
-# 🗓️ Private Schedule & Comment API
+# 🗓️ Schedule & Comment API
 
 일정 공유 및 댓글 기능을 제공하는 웹 서비스입니다.  
 비밀번호 기반 인증을 통해 일정 삭제 및 댓글 작성이 가능하며, 커스텀 예외 처리와 유효성 검사를 시행하는 API를 제공합니다.
