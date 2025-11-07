@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class CreateCommentRequest {
     @Size(max=100)
+    @NotBlank(message="내용을 입력해주세요")
     private String content;
     @NotBlank(message= "아이디를 입력해주세요")
     private String name;
