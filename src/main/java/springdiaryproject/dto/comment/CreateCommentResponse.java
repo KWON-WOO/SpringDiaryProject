@@ -22,6 +22,7 @@ public class CreateCommentResponse {
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
+
     public CreateCommentResponse(CommentDto dto) {
         this.schedule = dto.getSchedule();
         this.id = dto.getId();
